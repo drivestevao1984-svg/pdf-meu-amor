@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Meu Amor - Conversor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="pdf-icon">
+                <i class="fa-regular fa-file-pdf"></i>
+            </div>
+            <h1>PDF <span class="amor">meu amor</span> ♡</h1>
+        </div>
+    </header>
+
+    <main>
+        <!-- Grid de Cards de Conversão -->
+        <section class="converter-grid">
+            <div class="converter-card" data-type="image-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-image"></i></div>
+                <h3>Imagem → PDF</h3>
+                <p>JPG, PNG</p>
+            </div>
+
+            <div class="converter-card" data-type="word-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-file-word"></i></div>
+                <h3>Word → PDF</h3>
+                <p>DOCX</p>
+            </div>
+
+            <div class="converter-card" data-type="excel-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-file-excel"></i></div>
+                <h3>Excel → PDF</h3>
+                <p>XLSX, XLS</p>
+            </div>
+
+            <div class="converter-card" data-type="ppt-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-file-powerpoint"></i></div>
+                <h3>PowerPoint → PDF</h3>
+                <p>PPTX, PPT</p>
+            </div>
+
+            <div class="converter-card" data-type="txt-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-file-lines"></i></div>
+                <h3>Texto → PDF</h3>
+                <p>TXT</p>
+            </div>
+
+            <div class="converter-card" data-type="html-to-pdf">
+                <div class="card-icon"><i class="fa-solid fa-file-code"></i></div>
+                <h3>HTML → PDF</h3>
+                <p>HTML, HTM</p>
+            </div>
+
+            <div class="converter-card reverse" data-type="pdf-to-word">
+                <div class="card-icon"><i class="fa-solid fa-file-word"></i></div>
+                <h3>PDF → Word</h3>
+                <p>PDF</p>
+            </div>
+
+            <div class="converter-card reverse" data-type="pdf-to-ppt">
+                <div class="card-icon"><i class="fa-solid fa-file-powerpoint"></i></div>
+                <h3>PDF → PowerPoint</h3>
+                <p>PDF</p>
+            </div>
+
+            <div class="converter-card reverse" data-type="pdf-to-txt">
+                <div class="card-icon"><i class="fa-solid fa-file-lines"></i></div>
+                <h3>PDF → Texto</h3>
+                <p>PDF</p>
+            </div>
+        </section>
+
+        <!-- Modal de Conversão com Progresso -->
+        <div class="converter-modal" id="converterModal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeBtn"><i class="fa-solid fa-xmark"></i></button>
+                
+                <div class="modal-header">
+                    <div class="modal-icon" id="modalIcon"><i class="fa-solid fa-image"></i></div>
+                    <h2 id="modalTitle">Converter Imagem para PDF</h2>
+                </div>
+
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" hidden>
+                    <div class="upload-box" id="uploadBox">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Arraste seu arquivo aqui ou</p>
+                        <button class="select-btn" id="selectBtn">Selecionar Arquivo</button>
+                        <p class="file-types" id="fileTypes">JPG, PNG</p>
+                    </div>
+                </div>
+
+                <div class="progress-section" id="progressSection" style="display: none;">
+                    <div class="file-info">
+                        <i class="fa-solid fa-file"></i>
+                        <span id="fileName">arquivo.jpg</span>
+                    </div>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                    
+                    <p class="status-text" id="statusText">Iniciando conversão...</p>
+                </div>
+
+                <div class="success-section" id="successSection" style="display: none;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <h3>Conversão Concluída!</h3>
+                    <p>Seu arquivo está pronto para download.</p>
+                    <button class="download-btn" id="downloadBtn">
+                        <i class="fa-solid fa-download"></i> Baixar Arquivo
+                    </button>
+                    <button class="new-conversion-btn" id="newConversionBtn">Nova Conversão</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

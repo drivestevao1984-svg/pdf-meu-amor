@@ -1,0 +1,9 @@
+# Ignorar o arquivo de senhas e variáveis de ambiente
+.env
+
+# Ignorar a pasta de dependências do Node.js (pesada e desnecessária)
+node_modules/
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
