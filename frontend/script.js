@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(https://pdf-meu-amor.onrender.com/${currentConfig.rota}`, {
+            const response = await fetch(`https://pdf-meu-amor.onrender.com/${currentConfig.rota}`, {`, {
                 method: 'POST',
                 body: formData
             });
