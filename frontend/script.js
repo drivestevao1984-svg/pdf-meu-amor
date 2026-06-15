@@ -96,18 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFile = null;
     let progressInterval = null;
 
-    // Abrir modal ao clicar no card
     cards.forEach(card => {
         card.addEventListener('click', () => {
             const type = card.dataset.type;
             currentConfig = converterConfig[type];
             
             modalTitle.textContent = currentConfig.title;
-            modalIcon.innerHTML = `<i class="fa-solid ${currentConfig.icon}"></i>`;
+            modalIcon.innerHTML = '<i class="fa-solid ' + currentConfig.icon + '"></i>';
             fileTypes.textContent = currentConfig.types;
             fileInput.accept = currentConfig.accept;
             
-            // Resetar estados
             uploadBox.style.display = 'block';
             progressSection.style.display = 'none';
             successSection.style.display = 'none';
@@ -118,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Fechar modal
     closeBtn.addEventListener('click', () => {
         modal.classList.remove('active');
         clearInterval(progressInterval);
@@ -131,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag and drop
     uploadBox.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadBox.classList.add('dragover');
@@ -149,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Selecionar arquivo
     selectBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
@@ -161,13 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFile = file;
         fileName.textContent = file.name;
         
-        // Esconder upload, mostrar progresso
         uploadBox.style.display = 'none';
         progressSection.style.display = 'block';
         
-        // Simular progresso animado
         simulateProgress(() => {
-            // Quando chegar em 100%, fazer upload real
             uploadFile(file);
         });
     }
@@ -184,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         progressInterval = setInterval(() => {
             progress += Math.random() * 8 + 2;
-            if (progress > 95) progress = 95; // Para antes de 100 para esperar o upload real
+            if (progress > 95) progress = 95;
             
             progressBar.style.width = progress + '%';
             progressText.textContent = Math.floor(progress) + '%';
@@ -204,7 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(`https://pdf-meu-amor.onrender.com/convert/${currentConfig.rota}`, {
+            const url = 'https://pdf-meu-amor.onrender.com/convert/' + currentConfig.rota;
+            const response = await fetch(url, {
                 method: 'POST',
                 body: formData
             });
@@ -215,30 +208,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
+            const urlDownload = window.URL.createObjectURL(blob);
             
-            // Configurar botão de download
             downloadBtn.onclick = () => {
                 const a = document.createElement('a');
-                a.href = url;
+                a.href = urlDownload;
                 a.download = file.name.replace(/\.[^/.]+$/, '') + '.' + currentConfig.extSaida;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
             };
 
-            // Mostrar sucesso
             progressSection.style.display = 'none';
             successSection.style.display = 'block';
 
         } catch (error) {
             console.error(error);
-            statusText.textContent = '❌ Erro: ' + error.message;
+            statusText.textContent = 'Erro: ' + error.message;
             statusText.style.color = '#ef4444';
         }
     }
 
-    // Nova conversão
     newConversionBtn.addEventListener('click', () => {
         uploadBox.style.display = 'block';
         progressSection.style.display = 'none';
