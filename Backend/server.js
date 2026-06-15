@@ -15,7 +15,7 @@ const { salvarConversao } = require('./database');
 const app = express();
 app.use(cors());
 
-const frontendPath = path.join(__dirname, '..', 'frontend');
+const frontendPath = path.join(__dirname, 'frontend');
 app.use(express.static(frontendPath));
 
 const upload = multer({ dest: 'uploads/' });
