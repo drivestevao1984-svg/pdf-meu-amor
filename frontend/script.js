@@ -1,1 +1,176 @@
-console.log('Script.js novo carregado!');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script.js novo carregado!');
+    
+    var cards = document.querySelectorAll('.converter-card');
+    var modal = document.getElementById('converterModal');
+    var closeBtn = document.getElementById('closeBtn');
+    var fileInput = document.getElementById('fileInput');
+    var uploadBox = document.getElementById('uploadBox');
+    var selectBtn = document.getElementById('selectBtn');
+    var progressSection = document.getElementById('progressSection');
+    var progressBar = document.getElementById('progressBar');
+    var progressText = document.getElementById('progressText');
+    var statusText = document.getElementById('statusText');
+    var successSection = document.getElementById('successSection');
+    var downloadBtn = document.getElementById('downloadBtn');
+    var newConversionBtn = document.getElementById('newConversionBtn');
+    var modalTitle = document.getElementById('modalTitle');
+    var modalIcon = document.getElementById('modalIcon');
+    var fileName = document.getElementById('fileName');
+    var fileTypes = document.getElementById('fileTypes');
+
+    var converterConfig = {
+        'image-to-pdf': { title: 'Converter Imagem para PDF', icon: 'fa-image', accept: '.jpg,.jpeg,.png', types: 'JPG, PNG', rota: 'image-to-pdf', extSaida: 'pdf' },
+        'word-to-pdf': { title: 'Converter Word para PDF', icon: 'fa-file-word', accept: '.docx', types: 'DOCX', rota: 'word-to-pdf', extSaida: 'pdf' },
+        'excel-to-pdf': { title: 'Converter Excel para PDF', icon: 'fa-file-excel', accept: '.xlsx,.xls', types: 'XLSX, XLS', rota: 'excel-to-pdf', extSaida: 'pdf' },
+        'ppt-to-pdf': { title: 'Converter PowerPoint para PDF', icon: 'fa-file-powerpoint', accept: '.pptx,.ppt', types: 'PPTX, PPT', rota: 'ppt-to-pdf', extSaida: 'pdf' },
+        'txt-to-pdf': { title: 'Converter Texto para PDF', icon: 'fa-file-lines', accept: '.txt', types: 'TXT', rota: 'txt-to-pdf', extSaida: 'pdf' },
+        'html-to-pdf': { title: 'Converter HTML para PDF', icon: 'fa-file-code', accept: '.html,.htm', types: 'HTML, HTM', rota: 'html-to-pdf', extSaida: 'pdf' },
+        'pdf-to-word': { title: 'Converter PDF para Word', icon: 'fa-file-word', accept: '.pdf', types: 'PDF', rota: 'pdf-to-word', extSaida: 'docx' },
+        'pdf-to-ppt': { title: 'Converter PDF para PowerPoint', icon: 'fa-file-powerpoint', accept: '.pdf', types: 'PDF', rota: 'pdf-to-ppt', extSaida: 'pptx' },
+        'pdf-to-txt': { title: 'Converter PDF para Texto', icon: 'fa-file-lines', accept: '.pdf', types: 'PDF', rota: 'pdf-to-txt', extSaida: 'txt' }
+    };
+
+    var currentConfig = null;
+    var currentFile = null;
+    var progressInterval = null;
+
+    cards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            var type = card.dataset.type;
+            currentConfig = converterConfig[type];
+            modalTitle.textContent = currentConfig.title;
+            modalIcon.innerHTML = '<i class="fa-solid ' + currentConfig.icon + '"></i>';
+            fileTypes.textContent = currentConfig.types;
+            fileInput.accept = currentConfig.accept;
+            uploadBox.style.display = 'block';
+            progressSection.style.display = 'none';
+            successSection.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            modal.classList.add('active');
+        });
+    });
+
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+        clearInterval(progressInterval);
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            clearInterval(progressInterval);
+        }
+    });
+
+    uploadBox.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadBox.classList.add('dragover');
+    });
+
+    uploadBox.addEventListener('dragleave', function() {
+        uploadBox.classList.remove('dragover');
+    });
+
+    uploadBox.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadBox.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    selectBtn.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        currentFile = file;
+        fileName.textContent = file.name;
+        uploadBox.style.display = 'none';
+        progressSection.style.display = 'block';
+        simulateProgress(function() {
+            uploadFile(file);
+        });
+    }
+
+    function simulateProgress(callback) {
+        var progress = 0;
+        var stages = [
+            { at: 10, text: 'Lendo arquivo...' },
+            { at: 30, text: 'Processando...' },
+            { at: 60, text: 'Convertendo...' },
+            { at: 85, text: 'Finalizando...' },
+            { at: 100, text: 'Concluído!' }
+        ];
+        progressInterval = setInterval(function() {
+            progress += Math.random() * 8 + 2;
+            if (progress > 95) {
+                progress = 95;
+            }
+            progressBar.style.width = progress + '%';
+            progressText.textContent = Math.floor(progress) + '%';
+            var stage = stages.find(function(s) {
+                return progress >= s.at;
+            });
+            if (stage) {
+                statusText.textContent = stage.text;
+            }
+            if (progress >= 95) {
+                clearInterval(progressInterval);
+                callback();
+            }
+        }, 200);
+    }
+
+    function uploadFile(file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        var url = '/convert/' + currentConfig.rota;
+        
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(function(err) {
+                    throw new Error(err.error || 'Erro no servidor');
+                });
+            }
+            return response.blob();
+        })
+        .then(function(blob) {
+            var urlDownload = window.URL.createObjectURL(blob);
+            downloadBtn.onclick = function() {
+                var a = document.createElement('a');
+                a.href = urlDownload;
+                a.download = file.name.replace(/\.[^/.]+$/, '') + '.' + currentConfig.extSaida;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            };
+            progressSection.style.display = 'none';
+            successSection.style.display = 'block';
+        })
+        .catch(function(error) {
+            console.error(error);
+            statusText.textContent = 'Erro: ' + error.message;
+            statusText.style.color = '#ef4444';
+        });
+    }
+
+    newConversionBtn.addEventListener('click', function() {
+        uploadBox.style.display = 'block';
+        progressSection.style.display = 'none';
+        successSection.style.display = 'none';
+        fileInput.value = '';
+    });
+});
